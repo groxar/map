@@ -1,0 +1,34 @@
+# map documentation -- master TOC
+
+----
+
+<a name="map"></a>
+
+### map
+
+  * [map -- making xargs simpler *and* more powerful at the same time!](map.html#map_map_making_xargs_simpler_and_more_powerful_at_the_same_time__)
+      * [concepts](map.html#map_concepts_)
+      * [default replacement string](map.html#map_default_replacement_string_)
+      * [single replacements](map.html#map_single_replacements_)
+      * [multiple replacements](map.html#map_multiple_replacements_)
+      * [multiple jobs in parallel](map.html#map_multiple_jobs_in_parallel_)
+      * [specifying maximum arguments per invocation](map.html#map_specifying_maximum_arguments_per_invocation_)
+      * [delimiter mode](map.html#map_delimiter_mode_)
+      * [IMPORTANT NOTES](map.html#map_IMPORTANT_NOTES_)
+
+----
+
+<a name="map-vs-gp"></a>
+
+### map-vs-gp
+
+  * [map versus GNU parallel](mapgp.html) <!-- (mapgp) -->
+      * [things that map cannot/will not do](mapgp.html#cantwont) <!-- (cantwont) -->
+
+----
+
+<a name="README"></a>
+
+### README
+
+  * [map -- making xargs simpler and more powerful](README.html#README_map_making_xargs_simpler_and_more_powerful_)

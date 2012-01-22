@@ -1,0 +1,255 @@
+<head>
+<title>
+map -- making xargs simpler *and* more powerful at the same time!
+</title>
+<style>
+    body        { background: #fff; margin-left:  40px;   font-size:  0.9em;  font-family: sans-serif; max-width: 800px; }
+    h1          { background: #ffb; margin-left: -30px;   border-top:    5px  solid #ccc; }
+    h2          { background: #ffb; margin-left: -20px;   border-top:    3px  solid #ddd; }
+    h3          { background: #ffb; margin-left: -10px; }
+    h4          { background: #ffb; }
+    code        { font-size:    1.1em;  background:  #ddf; }
+    pre         { margin-left:  2em;    background:  #ddf; }
+    pre code    { font-size:    1.1em;  background:  #ddf; }
+</style>
+
+</head>
+
+<p style="text-align:center">
+    <a href="master-toc.html">master TOC</a>
+|
+    <a href="master-toc.html#map">chapter TOC</a>
+|
+    <a href="support.html">support</a>
+</p>
+
+
+<p><a name="map_map_making_xargs_simpler_and_more_powerful_at_the_same_time__"></a></p>
+
+<h1>map -- making xargs simpler <em>and</em> more powerful at the same time!</h1>
+
+<ul>
+<li><a href="#map_concepts_">concepts</a></li>
+<li><a href="#map_default_replacement_string_">default replacement string</a></li>
+<li><a href="#map_single_replacements_">single replacements</a></li>
+<li><a href="#map_multiple_replacements_">multiple replacements</a></li>
+<li><a href="#map_multiple_jobs_in_parallel_">multiple jobs in parallel</a></li>
+<li><a href="#map_specifying_maximum_arguments_per_invocation_">specifying maximum arguments per invocation</a></li>
+<li><a href="#map_delimiter_mode_">delimiter mode</a></li>
+<li><a href="#map_IMPORTANT_NOTES_">IMPORTANT NOTES</a></li>
+</ul>
+
+<hr />
+
+<p>The <code>map</code> command was something I wrote a long time ago and have used pretty
+much forever, in a sort of "taken for granted" way.  I would never have put it
+out there if I had not, by chance, discovered something called <a href="http://www.gnu.org/software/parallel/">GNU
+Parallel</a> and started reading the <strong>huge</strong> list of examples on its pages.</p>
+
+<p>And yet, casually looking at the examples, I found that <code>map</code> could do pretty
+much all of the generic ones!  So much so that I sat down and started writing
+down <code>map</code> equivalents of GNU Parallel's examples, and before I knew it I was
+about half way through their list with only a few that <code>map</code> could not do!
+The end result was this <a href="mapgp.html" title="map versus GNU parallel">feature comparison</a>.</p>
+
+<p>But...</p>
+
+<ul>
+<li><code>map</code> is 330 lines of perl.  GNU Parallel is 5000 lines.</li>
+<li><code>map</code> has 3 options (if you don't count -h, -q, and -v).  GNU Parallel has
+almost a 100.</li>
+</ul>
+
+<p>(In all fairness, <a href="mapgp.html#cantwont" title="things that map cannot/will not do">here</a>'s a list of things <code>map</code> can't/won't do
+which GNU Parallel can/will, although a lot of them are "kitchen sink" items!)</p>
+
+<p>And that was when I decided to put this out there as its own little project.</p>
+
+<p>If you use it, please let me know.  Some quick documentation is right here in
+this file.  Examples are <a href="mapgp.html" title="map versus GNU parallel">here</a>.  <code>map</code> responds to <code>-h</code> as you would
+expect, if you need to refresh your memory.</p>
+
+<hr />
+
+<p><a name="map_concepts_"></a></p>
+
+<h2>concepts</h2>
+
+<p>'map' is like xargs in many ways, except for having very few options, and a
+fixed set of "replace strings", all using the <code>%</code> character.</p>
+
+<p>The <strong>biggest difference</strong>, conceptually, is that map will treat each input
+line as one single argument and does not space-separate them again.  This
+makes it usable by default for filenames with spaces etc (although please see
+the IMPORTANT NOTES section later for details).</p>
+
+<p>The second difference is that <code>map</code> will happily treat the first argument as
+the command and the rest as input "lines" if STDIN is a tty, so you can say
+things like:</p>
+
+<pre><code>map gzip *.pdf
+</code></pre>
+
+<p>or</p>
+
+<pre><code>map "zip -q -r % %" src doc conf contrib hooks
+</code></pre>
+
+<p>The third difference is that map also has a pretty cool "delimiter
+mode" that at first seems totally unrelated to xargs but actually is not.
+There are a couple of examples later.</p>
+
+<p><a name="map_default_replacement_string_"></a></p>
+
+<h2>default replacement string</h2>
+
+<p>For quick reference, here are the defaults if no '%' sign exists anywhere in
+the command.  See the next section(s) for what '%' and '%%' mean.</p>
+
+<p>Normally a '%%' is assumed to be appended to the end.  If the <code>-p</code> option is
+used without the <code>-n</code> option, then this changes to a single '%'.</p>
+
+<p><a name="map_single_replacements_"></a></p>
+
+<h2>single replacements</h2>
+
+<p><code>%</code> is replaced by the current input line, with a trailing slash removed if
+present.  <code>%D</code> is replaced by the directory name of the current filename.
+<code>%B</code> is the basename and <code>%E</code> is the extension.  (This means that <code>%</code> is
+pretty much equal to <code>%D/%B.%E</code>).</p>
+
+<p>These replacements use only one input line per run, so</p>
+
+<pre><code>seq 1 3 | map echo %
+</code></pre>
+
+<p>gives you</p>
+
+<pre><code>1
+2
+3
+</code></pre>
+
+<p><a name="map_multiple_replacements_"></a></p>
+
+<h2>multiple replacements</h2>
+
+<p>However, most often, you want all the arguments tacked on to one "run" of the
+the command.  Do this by specifying a <code>%%</code>:</p>
+
+<pre><code>seq 1 3 | map echo %%
+</code></pre>
+
+<p>returns</p>
+
+<pre><code>1 2 3
+</code></pre>
+
+<p>Since this is the most common reason for using map, this is the default if you
+don't specify either % or %%:</p>
+
+<pre><code>seq 1 3 | map echo
+# returns:
+1 2 3
+</code></pre>
+
+<p>A <code>%%</code> (and similarly <code>%%D</code>, <code>%%B</code>, and <code>%%E</code>) get replaced by as many input
+lines as possible (subject to internal limit of command line length and the
+user-specified <code>-n</code> value if used).</p>
+
+<p>Just like GNU Parallel, this replacement even works within a word, replicating
+the entire word:</p>
+
+<pre><code>seq 1 3 | map echo abc-%%-def
+</code></pre>
+
+<p>produces</p>
+
+<pre><code>abc-1-def abc-2-def abc-3-def
+</code></pre>
+
+<p><a name="map_multiple_jobs_in_parallel_"></a></p>
+
+<h2>multiple jobs in parallel</h2>
+
+<p>When you run something like:</p>
+
+<pre><code>map -p 4 gzip *.pdf
+# yes, it doesn't have to be of the form 'ls *.pdf | map -p 4 gzip'!
+</code></pre>
+
+<p>you are running 4 jobs in parallel.  This indicates that the job might be CPU
+bound (usually, though not always) so it's best to run each job on one input
+line rather than give it as many as it will take.</p>
+
+<p>So when you run in parallel mode, the default is <code>%</code> because that is what
+makes sense.</p>
+
+<p><a name="map_specifying_maximum_arguments_per_invocation_"></a></p>
+
+<h2>specifying maximum arguments per invocation</h2>
+
+<p>However, if you use <code>-n</code>, (even if you are also using <code>-p</code>) the default
+switches back to <code>%%</code>.  The logic is that specifying "maximum arguments per
+invocation" implicitly gives permission to actually <em>have</em> more than one
+argument, overriding the <code>-p</code> exception.</p>
+
+<p>So yeah this is an exception to an exception but I don't think it's too hard
+to remember.</p>
+
+<p>And if in doubt you can always specify what you want you know...</p>
+
+<p><a name="map_delimiter_mode_"></a></p>
+
+<h2>delimiter mode</h2>
+
+<p>Here's an example; more documentation may follow if anyone asks but notice the
+delimiter character (colon) and the specification of field 1 and field 7:</p>
+
+<pre><code>cat /etc/passwd | egrep -v 'nologin|bash' | map -d=: echo %1 use %7 as shell
+</code></pre>
+
+<p>The default delimiter is whitespace.  For convenience, '-d=t' uses tabs.
+Anything else, like ':', is specified literally, like above.</p>
+
+<p>Here's another example: report users who have some shell as login but no GECOS
+field:</p>
+
+<pre><code> &lt; /etc/passwd map -d=: -- '[[ %7 =~ sh ]] &amp;&amp; [ -z "%5" ] &amp;&amp; echo %1 || :'
+</code></pre>
+
+<p><a name="map_IMPORTANT_NOTES_"></a></p>
+
+<h2>IMPORTANT NOTES</h2>
+
+<p><strong>Filenames with unusual characters</strong></p>
+
+<p>Map <strong>will</strong> work fine with such filenames <strong>except that</strong> you cannot use
+parallel mode (since that invokes xargs).  You cannot also use redirection or
+multiple commands unless you provide your own quoting.</p>
+
+<p>For example (assuming some command sending in a list of filenames), this will
+fail:</p>
+
+<pre><code>... | map 'echo -n `gzip &lt;  %  | wc -c`; echo -n '*100/'; wc -c &lt;  % ' | bc
+</code></pre>
+
+<p>but this will succeed:</p>
+
+<pre><code>... | map 'echo -n `gzip &lt; "%" | wc -c`; echo -n '*100/'; wc -c &lt; "%"' | bc
+</code></pre>
+
+<p>(by the way, this computes the size of the gzipped file as a percentage of the
+original)</p>
+
+<p><strong>OTHER WARNINGS</strong></p>
+
+<ul>
+<li><p>you may need to use <code>--</code> to separate map's options from it's command if
+the command also has options.  Map's option parsing is rather greedy (it's
+on my todo list to fix this).</p></li>
+<li><p>never mix the 3 styles of replacement strings ('%' and its cousins, '%%'
+and its cousins, and '%1', '%2', etc for delimiter mode).  Odd things will
+happen -- I don't check for sanity.</p></li>
+<li><p>parallel mode defaults to number of CPUs.</p></li>
+</ul>

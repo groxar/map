@@ -1,0 +1,14 @@
+%labels = (
+  'README_map_making_xargs_simpler_and_more_powerful_' => 'README.html#README_map_making_xargs_simpler_and_more_powerful_ "map -- making xargs simpler and more powerful"',
+  'cantwont' => 'mapgp.html#cantwont "things that map cannot/will not do"',
+  'map_IMPORTANT_NOTES_' => 'map.html#map_IMPORTANT_NOTES_ "IMPORTANT NOTES"',
+  'map_concepts_' => 'map.html#map_concepts_ "concepts"',
+  'map_default_replacement_string_' => 'map.html#map_default_replacement_string_ "default replacement string"',
+  'map_delimiter_mode_' => 'map.html#map_delimiter_mode_ "delimiter mode"',
+  'map_map_making_xargs_simpler_and_more_powerful_at_the_same_time__' => 'map.html#map_map_making_xargs_simpler_and_more_powerful_at_the_same_time__ "map -- making xargs simpler *and* more powerful at the same time!"',
+  'map_multiple_jobs_in_parallel_' => 'map.html#map_multiple_jobs_in_parallel_ "multiple jobs in parallel"',
+  'map_multiple_replacements_' => 'map.html#map_multiple_replacements_ "multiple replacements"',
+  'map_single_replacements_' => 'map.html#map_single_replacements_ "single replacements"',
+  'map_specifying_maximum_arguments_per_invocation_' => 'map.html#map_specifying_maximum_arguments_per_invocation_ "specifying maximum arguments per invocation"',
+  'mapgp' => 'mapgp.html "map versus GNU parallel"'
+);
