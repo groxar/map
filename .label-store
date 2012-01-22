@@ -10,5 +10,6 @@
   'map_multiple_replacements_' => 'map.html#map_multiple_replacements_ "multiple replacements"',
   'map_single_replacements_' => 'map.html#map_single_replacements_ "single replacements"',
   'map_specifying_maximum_arguments_per_invocation_' => 'map.html#map_specifying_maximum_arguments_per_invocation_ "specifying maximum arguments per invocation"',
+  'map_vs_gp_detailed_list_of_examples_' => 'mapgp.html#map_vs_gp_detailed_list_of_examples_ "detailed list of examples"',
   'mapgp' => 'mapgp.html "map versus GNU parallel"'
 );

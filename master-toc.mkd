@@ -23,6 +23,7 @@
 ### map-vs-gp
 
   * [map versus GNU parallel](mapgp.html) <!-- (mapgp) -->
+      * [detailed list of examples](mapgp.html#map_vs_gp_detailed_list_of_examples_)
       * [things that map cannot/will not do](mapgp.html#cantwont) <!-- (cantwont) -->
 
 ----
