@@ -31,12 +31,19 @@ map -- making xargs simpler *and* more powerful at the same time!
 <ul>
 <li><a href="#map_concepts_">concepts</a></li>
 <li><a href="#map_default_replacement_string_">default replacement string</a></li>
+<li><a href="#map_details_">details</a>
+<ul>
 <li><a href="#map_single_replacements_">single replacements</a></li>
 <li><a href="#map_multiple_replacements_">multiple replacements</a></li>
 <li><a href="#map_multiple_jobs_in_parallel_">multiple jobs in parallel</a></li>
 <li><a href="#map_specifying_maximum_arguments_per_invocation_">specifying maximum arguments per invocation</a></li>
 <li><a href="#map_delimiter_mode_">delimiter mode</a></li>
-<li><a href="#map_IMPORTANT_NOTES_">IMPORTANT NOTES</a></li>
+</ul></li>
+<li><a href="#map_IMPORTANT_NOTES_">IMPORTANT NOTES</a>
+<ul>
+<li><a href="#map_Filenames_with_unusual_characters_">Filenames with unusual characters</a></li>
+<li><a href="#map_OTHER_WARNINGS_">OTHER WARNINGS</a></li>
+</ul></li>
 </ul>
 
 <hr />
@@ -78,47 +85,61 @@ expect, if you need to refresh your memory.</p>
 <p>'map' is like xargs in many ways, except for having very few options, and a
 fixed set of "replace strings", all using the <code>%</code> character.</p>
 
-<p>The <strong>biggest difference</strong>, conceptually, is that map will treat each input
-line as one single argument and does not space-separate them again.  This
-makes it usable by default for filenames with spaces etc (although please see
-the IMPORTANT NOTES section later for details).</p>
+<p>Here are the highlights:</p>
 
-<p>The second difference is that <code>map</code> will happily treat the first argument as
-the command and the rest as input "lines" if STDIN is a tty, so you can say
-things like:</p>
+<ul>
+<li><p>map will treat each input line as one single argument; it will not
+space-separate them like xargs does.</p>
+
+<p>This makes it usable by default for filenames with spaces etc (but please
+see the IMPORTANT NOTES section later for details).</p></li>
+<li><p>map's <strong>replace strings</strong> are <code>%</code> and <code>%%</code>.  A single % means substitute
+exactly one input item and run the command, while a double % means to
+substitute as many input items as possible (subject to '-n' and total
+command length) before running the command (like xargs).</p>
+
+<p>See later for defaults if you don't specify them, as well as the D, B, and
+E modifiers.</p></li>
+<li><p>map will happily treat the first argument as the command and the rest as
+input "lines" if STDIN is not a pipe.  This lets you do things like this:</p>
 
 <pre><code>map gzip *.pdf
+# same as: ls *.pdf | map gzip
 </code></pre>
 
-<p>or</p>
+<p>or, using quotes for the first argument:</p>
 
 <pre><code>map "zip -q -r % %" src doc conf contrib hooks
-</code></pre>
-
-<p>The third difference is that map also has a pretty cool "delimiter
-mode" that at first seems totally unrelated to xargs but actually is not.
-There are a couple of examples later.</p>
+# same as: \ls -d src doc conf contrib hooks | map zip -q -r % %
+</code></pre></li>
+<li><p>map also has a pretty cool "delimiter mode" that at first seems totally
+unrelated to xargs but actually is not.  See later for examples.</p></li>
+</ul>
 
 <p><a name="map_default_replacement_string_"></a></p>
 
 <h2>default replacement string</h2>
 
-<p>For quick reference, here are the defaults if no '%' sign exists anywhere in
-the command.  See the next section(s) for what '%' and '%%' mean.</p>
+<p>If no replacement string (%, %%, or variants) exist anywhere in the command,
+the default is to assume a '%%' at the end.</p>
 
-<p>Normally a '%%' is assumed to be appended to the end.  If the <code>-p</code> option is
-used without the <code>-n</code> option, then this changes to a single '%'.</p>
+<p>However, if the '-p' option is used <em>without</em> the '-n' option, the default
+becomes '%'.</p>
+
+<p><a name="map_details_"></a></p>
+
+<h2>details</h2>
 
 <p><a name="map_single_replacements_"></a></p>
 
-<h2>single replacements</h2>
+<h3>single replacements</h3>
 
 <p><code>%</code> is replaced by the current input line, with a trailing slash removed if
 present.  <code>%D</code> is replaced by the directory name of the current filename.
 <code>%B</code> is the basename and <code>%E</code> is the extension.  (This means that <code>%</code> is
 pretty much equal to <code>%D/%B.%E</code>).</p>
 
-<p>These replacements use only one input line per run, so</p>
+<p>As said above, these replacements use only one input line per run, so</p>
 
 <pre><code>seq 1 3 | map echo %
 </code></pre>
@@ -132,9 +153,9 @@ pretty much equal to <code>%D/%B.%E</code>).</p>
 
 <p><a name="map_multiple_replacements_"></a></p>
 
-<h2>multiple replacements</h2>
+<h3>multiple replacements</h3>
 
-<p>However, most often, you want all the arguments tacked on to one "run" of the
+<p>Most often, you want all the arguments tacked on to one "run" of the
 the command.  Do this by specifying a <code>%%</code>:</p>
 
 <pre><code>seq 1 3 | map echo %%
@@ -170,12 +191,11 @@ the entire word:</p>
 
 <p><a name="map_multiple_jobs_in_parallel_"></a></p>
 
-<h2>multiple jobs in parallel</h2>
+<h3>multiple jobs in parallel</h3>
 
 <p>When you run something like:</p>
 
 <pre><code>map -p 4 gzip *.pdf
-# yes, it doesn't have to be of the form 'ls *.pdf | map -p 4 gzip'!
 </code></pre>
 
 <p>you are running 4 jobs in parallel.  This indicates that the job might be CPU
@@ -187,7 +207,7 @@ makes sense.</p>
 
 <p><a name="map_specifying_maximum_arguments_per_invocation_"></a></p>
 
-<h2>specifying maximum arguments per invocation</h2>
+<h3>specifying maximum arguments per invocation</h3>
 
 <p>However, if you use <code>-n</code>, (even if you are also using <code>-p</code>) the default
 switches back to <code>%%</code>.  The logic is that specifying "maximum arguments per
@@ -201,7 +221,7 @@ to remember.</p>
 
 <p><a name="map_delimiter_mode_"></a></p>
 
-<h2>delimiter mode</h2>
+<h3>delimiter mode</h3>
 
 <p>Here's an example; more documentation may follow if anyone asks but notice the
 delimiter character (colon) and the specification of field 1 and field 7:</p>
@@ -222,7 +242,9 @@ field:</p>
 
 <h2>IMPORTANT NOTES</h2>
 
-<p><strong>Filenames with unusual characters</strong></p>
+<p><a name="map_Filenames_with_unusual_characters_"></a></p>
+
+<h3>Filenames with unusual characters</h3>
 
 <p>Map <strong>will</strong> work fine with such filenames <strong>except that</strong> you have to do some
 extra quoting for parallel mode (since that invokes xargs), or if you want to
@@ -242,7 +264,9 @@ fail:</p>
 <p>(by the way, this computes the size of the gzipped file as a percentage of the
 original)</p>
 
-<p><strong>OTHER WARNINGS</strong></p>
+<p><a name="map_OTHER_WARNINGS_"></a></p>
+
+<h3>OTHER WARNINGS</h3>
 
 <ul>
 <li><p>never mix the 3 styles of replacement strings ('%' and its cousins, '%%'

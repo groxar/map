@@ -1,10 +1,13 @@
 %labels = (
   'README_map_making_xargs_simpler_and_more_powerful_' => 'README.html#README_map_making_xargs_simpler_and_more_powerful_ "map -- making xargs simpler and more powerful"',
   'cantwont' => 'mapgp.html#cantwont "things that map cannot/will not do"',
+  'map_Filenames_with_unusual_characters_' => 'map.html#map_Filenames_with_unusual_characters_ "Filenames with unusual characters"',
   'map_IMPORTANT_NOTES_' => 'map.html#map_IMPORTANT_NOTES_ "IMPORTANT NOTES"',
+  'map_OTHER_WARNINGS_' => 'map.html#map_OTHER_WARNINGS_ "OTHER WARNINGS"',
   'map_concepts_' => 'map.html#map_concepts_ "concepts"',
   'map_default_replacement_string_' => 'map.html#map_default_replacement_string_ "default replacement string"',
   'map_delimiter_mode_' => 'map.html#map_delimiter_mode_ "delimiter mode"',
+  'map_details_' => 'map.html#map_details_ "details"',
   'map_map_making_xargs_simpler_and_more_powerful_at_the_same_time__' => 'map.html#map_map_making_xargs_simpler_and_more_powerful_at_the_same_time__ "map -- making xargs simpler *and* more powerful at the same time!"',
   'map_multiple_jobs_in_parallel_' => 'map.html#map_multiple_jobs_in_parallel_ "multiple jobs in parallel"',
   'map_multiple_replacements_' => 'map.html#map_multiple_replacements_ "multiple replacements"',
