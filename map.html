@@ -224,9 +224,9 @@ field:</p>
 
 <p><strong>Filenames with unusual characters</strong></p>
 
-<p>Map <strong>will</strong> work fine with such filenames <strong>except that</strong> you cannot use
-parallel mode (since that invokes xargs).  You cannot also use redirection or
-multiple commands unless you provide your own quoting.</p>
+<p>Map <strong>will</strong> work fine with such filenames <strong>except that</strong> you have to do some
+extra quoting for parallel mode (since that invokes xargs), or if you want to
+use redirection or multiple commands.</p>
 
 <p>For example (assuming some command sending in a list of filenames), this will
 fail:</p>
