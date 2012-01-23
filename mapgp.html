@@ -129,9 +129,9 @@ always exactly the same as <code>%D/%B.%E</code> (directory, basename, extension
 
 <p><strong>Example: composed commands</strong></p>
 
-<pre><code>ls | map -- 'echo -ne %"\t"; ls %|wc -l'
+<pre><code>ls | map 'echo -ne %"\t"; ls %|wc -l'
 
-ls   | map -- '( echo -ne %"\t"; ls %|wc -l ) &gt; %.dir'
+ls | map '( echo -ne %"\t"; ls %|wc -l ) &gt; %.dir'
 </code></pre>
 
 <p>I didn't do the next 2; they seemed boring and not really clean.  The URLs one
@@ -165,7 +165,7 @@ map -p 'zcat % |bzip2 &gt; %B.bz2 &amp;&amp; rm %' *.gz
 some level in GNU parallel but we can do it too.  We'll do it with an 'echo'
 instead of 'wget':</p>
 
-<pre><code>seq 30 | map 'seq -w 10 | map -n 1 -- echo today -%, picture'
+<pre><code>seq 30 | map 'seq -w 10 | map -n 1 echo today -%, picture'
 </code></pre>
 
 <p>The first seq puts out a number that replaced the sole '%' sign in the whole
@@ -211,7 +211,7 @@ you want:</p>
 
 <p><strong>Example: working as cat|sh</strong></p>
 
-<pre><code>cat cmdlist | map -p 100 -- %
+<pre><code>cat cmdlist | map -p 100 %
 </code></pre>
 
 <p><a name="cantwont"></a></p>
