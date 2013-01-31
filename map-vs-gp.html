@@ -1,36 +1,31 @@
-<head>
-<title>
-map versus GNU parallel
-</title>
-<style>
-    body        { background: #fff; margin-left:  40px;   font-size:  0.9em;  font-family: sans-serif; max-width: 800px; }
-    h1          { background: #ffb; margin-left: -30px;   border-top:    5px  solid #ccc; }
-    h2          { background: #ffb; margin-left: -20px;   border-top:    3px  solid #ddd; }
-    h3          { background: #ffb; margin-left: -10px; }
-    h4          { background: #ffb; }
-    code        { font-size:    1.1em;  background:  #ddf; }
-    pre         { margin-left:  2em;    background:  #ddf; }
-    pre code    { font-size:    1.1em;  background:  #ddf; }
-</style>
 
+<head>
+    <title>map versus GNU parallel</title>
+<style>
+    body        { background: #fff; text-color: #000; margin-left:  40px;   font-size:  0.9em;  font-family: sans-serif; max-width: 800px; }
+    h1          { background: #ffb; text-color: #000; margin-left: -30px;   border-top:    5px  solid #ccc; }
+    h2          { background: #ffb; text-color: #000; margin-left: -20px;   border-top:    3px  solid #ddd; }
+    h3          { background: #ffb; text-color: #000; margin-left: -10px; }
+    h4          { background: #ffb; text-color: #000; }
+    code        { font-size:    1.1em;  background:  #ddf; text-color: #000; }
+    pre         { margin-left:  2em;    background:  #ddf; text-color: #000; }
+    pre code    { font-size:    1.1em;  background:  #ddf; text-color: #000; }
+</style>
 </head>
 
 <p style="text-align:center">
     <a href="master-toc.html">master TOC</a>
 |
-    <a href="master-toc.html#map-vs-gp">chapter TOC</a>
+    <a href="index.html">main page</a>
 |
-    <a href="support.html">support</a>
+    <a href="index.html#license">license</a>
 </p>
+<h2><a name="mapgp"></a> map versus GNU parallel</h2>
 
-<!-- file: mapgp "map versus GNU parallel" -->
-
-<h1>map versus GNU parallel</h1>
-
-<ul>
-<li><a href="#map_vs_gp_detailed_list_of_examples_">detailed list of examples</a></li>
-<li><a href="#cantwont">things that map cannot/will not do</a></li>
-</ul>
+<pre><code>  * [map versus GNU parallel][mapgp]
+      * detailed list of examples
+      * [things that map cannot/will not do][cantwont]
+</code></pre>
 
 <p>Here's a feature comparision of map versus GNU parallel, mostly using examples
 in their <a href="http://www.gnu.org/software/parallel/man.html">man page</a>.</p>
@@ -43,9 +38,7 @@ Not Unix" but this is too much!)</p>
 <p>It seems to match almost all the examples upto the halfway point of their set,
 despite having only 3 options to remember, compared to almost a 100.</p>
 
-<p><a name="map_vs_gp_detailed_list_of_examples_"></a></p>
-
-<h2>detailed list of examples</h2>
+<h3>detailed list of examples</h3>
 
 <p>(Note: we're omitting the examples that talk about spaces in filenames, using
 the null character, etc., because I didn't have the energy to test them
@@ -215,9 +208,7 @@ you want:</p>
 <pre><code>cat cmdlist | map -p 100 %
 </code></pre>
 
-<p><a name="cantwont"></a></p>
-
-<h2>things that map cannot/will not do</h2>
+<h3><a name="cantwont"></a> things that map cannot/will not do</h3>
 
 <p>(this is only from the examples list; I haven't read the full options list,
 reasoning that if an option were indispensable they'd have an example for it
